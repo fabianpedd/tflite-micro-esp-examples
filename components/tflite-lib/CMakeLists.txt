@@ -18,18 +18,6 @@ file(GLOB srcs_kernels
           "${tfmicro_kernels_dir}/*.c"
           "${tfmicro_kernels_dir}/*.cc")
 
-# remove sources which will be provided by esp_nn
-list(REMOVE_ITEM srcs_kernels
-          "${tfmicro_kernels_dir}/add.cc"
-          "${tfmicro_kernels_dir}/conv.cc"
-          "${tfmicro_kernels_dir}/depthwise_conv.cc"
-          "${tfmicro_kernels_dir}/fully_connected.cc"
-          "${tfmicro_kernels_dir}/mul.cc"
-          "${tfmicro_kernels_dir}/pooling.cc")
-
-FILE(GLOB esp_nn_kernels
-          "${tfmicro_kernels_dir}/esp_nn/*.cc")
-
 set(lib_srcs
           "${srcs_micro}"
           "${srcs_kernels}"
@@ -51,14 +39,12 @@ idf_component_register(
             INCLUDE_DIRS "." "third_party/gemmlowp"
                          "third_party/flatbuffers/include"
                          "third_party/ruy"
-                         "third_party/kissfft"
-            REQUIRES "esp-nn")
+                         "third_party/kissfft")
 
 # Reduce the level of paranoia to be able to compile TF sources
 target_compile_options(${COMPONENT_LIB} PRIVATE
   -Wno-maybe-uninitialized
   -Wno-missing-field-initializers
-  -DESP_NN # enables ESP-NN optimizations by Espressif
   -Wno-type-limits)
 
 target_compile_options(${COMPONENT_LIB} PRIVATE -fno-unwind-tables -ffunction-sections -fdata-sections -fmessage-length=0 -DTF_LITE_STATIC_MEMORY -DTF_LITE_DISABLE_X86_NEON -O3 -Wsign-compare -Wdouble-promotion -Wshadow -Wunused-variable -Wmissing-field-initializers -Wunused-function -Wswitch -Wvla -Wall -Wextra -Wstrict-aliasing -Wno-unused-parameter -Wno-nonnull)

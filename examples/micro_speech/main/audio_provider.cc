@@ -75,22 +75,22 @@ static void i2s_init(void) {
       .fixed_mclk = -1,
   };
   i2s_pin_config_t pin_config = {
-      .bck_io_num = 26,    // IIS_SCLK
-      .ws_io_num = 32,     // IIS_LCLK
+      .bck_io_num = 8,    // IIS_SCLK
+      .ws_io_num = 9,     // IIS_LCLK
       .data_out_num = -1,  // IIS_DSIN
-      .data_in_num = 33,   // IIS_DOUT
+      .data_in_num = 10,   // IIS_DOUT
   };
   esp_err_t ret = 0;
-  ret = i2s_driver_install((i2s_port_t)1, &i2s_config, 0, NULL);
+  ret = i2s_driver_install((i2s_port_t)0, &i2s_config, 0, NULL);
   if (ret != ESP_OK) {
     ESP_LOGE(TAG, "Error in i2s_driver_install");
   }
-  ret = i2s_set_pin((i2s_port_t)1, &pin_config);
+  ret = i2s_set_pin((i2s_port_t)0, &pin_config);
   if (ret != ESP_OK) {
     ESP_LOGE(TAG, "Error in i2s_set_pin");
   }
 
-  ret = i2s_zero_dma_buffer((i2s_port_t)1);
+  ret = i2s_zero_dma_buffer((i2s_port_t)0);
   if (ret != ESP_OK) {
     ESP_LOGE(TAG, "Error in initializing dma buffer with 0");
   }
@@ -102,7 +102,7 @@ static void CaptureSamples(void* arg) {
   i2s_init();
   while (1) {
     /* read 100ms data at once from i2s */
-    i2s_read((i2s_port_t)1, (void*)i2s_read_buffer, i2s_bytes_to_read,
+    i2s_read((i2s_port_t)0, (void*)i2s_read_buffer, i2s_bytes_to_read,
              &bytes_read, 10);
     if (bytes_read <= 0) {
       ESP_LOGE(TAG, "Error in I2S read : %d", bytes_read);
